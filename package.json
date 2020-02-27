@@ -1,0 +1,23 @@
+{
+  "name": "bing-maps-loader",
+  "version": "0.1.0",
+  "description": "Loads the Bing Map API js from ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deeja/bing-maps-loader.git"
+  },
+  "keywords": [
+    "Bing",
+    "maps"
+  ],
+  "author": "Deeja",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/deeja/bing-maps-loader/issues"
+  },
+  "homepage": "https://github.com/deeja/bing-maps-loader#readme"
+}
