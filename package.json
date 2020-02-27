@@ -1,7 +1,7 @@
 {
   "name": "bing-maps-loader",
-  "version": "0.1.0",
-  "description": "Loads the Bing Map API js from ",
+  "version": "0.2.0",
+  "description": "Promise based Bing Maps JS Loader for websites ",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,7 +12,10 @@
   },
   "keywords": [
     "Bing",
-    "maps"
+    "Maps",
+	"Promise",
+	"Microsoft",
+	"Loader"
   ],
   "author": "Deeja",
   "license": "ISC",
