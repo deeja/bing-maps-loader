@@ -13,23 +13,19 @@ export default function initialize(apiKey) {
 
 export class BingMapModuleLoader {
   static hasLoaded(moduleName) {
-	if (!this.modules){
-		console.log("! MODULES set up")
-		this.modules = [];
-	}  
+    if (!this.modules) {
+      this.modules = [];
+    }
     return this.modules.includes(moduleName);
   }
 
   static ensureModule(moduleName) {
     if (this.hasLoaded(moduleName)) {
-	  console.log("! MODULES already loaded", moduleName)
       return Promise.resolve();
     }
     return new Promise(resolve => {
-		console.log("! MODULES loading", moduleName)
       window.Microsoft.Maps.loadModule(moduleName, () => {
-		  console.log("! MODULES loaded now", moduleName)
-		this.modules.push(moduleName)
+        this.modules.push(moduleName);
         resolve();
       });
     });
