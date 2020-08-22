@@ -1,15 +1,13 @@
 // Initial script taken from
 // https://docs.microsoft.com/en-us/bingmaps/v8-web-control/creating-and-hosting-map-controls/creating-a-basic-map-control
 
-if (typeof window === "undefined") {
-  throw Error(
-    "Bing Maps Loader :: Not running in a browser - SSR not supported yet"
-  );
-}
-
 const CALLBACK_NAME: string = "GetMapCallback";
 
-let mapsLoaded = () => !!window.Microsoft?.Maps;
+const inBrowser = () => {
+  return typeof window !== "undefined";
+};
+
+let mapsLoaded = () => inBrowser() && !!window.Microsoft?.Maps;
 let initialized = mapsLoaded();
 let resolver: any;
 let rejecter: OnErrorEventHandler;
@@ -19,33 +17,51 @@ const getApiUrl = function (apiKey: string) {
 };
 
 /**
- * Fire off the request to load the API, then set and wait for the callback
- * The promise resolves when the callback completes;
+ * Fire off the request to load the API 
  * @param apiKey
  * @param modulesToLoad Use the Module names list to populate
  */
-const initialize = (
-  apiKey: string,
-  ...modulesToLoad: string[]
-): Promise<void> => {
+const initialize = (apiKey: string, ...modulesToLoad: string[]) => {
+  if (!inBrowser()) {
+    throw Error(
+      "Bing Maps Loader :: Not running in a browser \n Call initializeSSR() in combination with getApiUrl(). Info in the bing-maps-loader README "
+    );
+  }
   if (mapsLoaded()) {
     return loadModules(modulesToLoad);
   }
-  if (initialized) {
-    return initPromise;
+  if (!initialized) {
+    initialized = true;
+    setCallback(modulesToLoad);
+    addMapsScriptToHead(apiKey);
+  }
+};
+
+/**
+ * For SSR implementations, the script url + api key will already be in the HTML head. 
+ * @param modulesToLoad Use the Module names list to populate
+ */
+const initializeSSR = (...modulesToLoad: string[]) => {
+  if (initialized){
+    return;
+  }
+  if (inBrowser()) {
+    setCallback(modulesToLoad);
   }
   initialized = true;
+  //@ts-ignore
+};
+
+const setCallback = (modulesToLoad: string[]) => {
   //@ts-ignore
   window[CALLBACK_NAME] = async () => {
     await loadModules(modulesToLoad);
     resolver();
   };
-  addMapsScriptToHead(apiKey);
-  return initPromise;
 };
 
 function loadModules(modulesToLoad: string[]) {
-  const loadPromises = modulesToLoad.map((moduleToLoad) => {   
+  const loadPromises = modulesToLoad.map((moduleToLoad) => {
     return loadModule(moduleToLoad);
   });
   return Promise.all(loadPromises).then(() => Promise.resolve());
@@ -53,7 +69,7 @@ function loadModules(modulesToLoad: string[]) {
 
 /** Sets up Promises for the CALLBACK
  */
-const initPromise = new Promise<void>((resolve, reject) => {
+const whenLoaded = new Promise<void>((resolve, reject) => {
   resolver = resolve;
   rejecter = reject;
 });
@@ -103,4 +119,4 @@ export const ModuleNames = {
   VenueMaps: "Microsoft.Maps.VenueMaps",
 };
 
-export default { initialize, loadModule };
+export { initialize, whenLoaded, initializeSSR, getApiUrl, loadModule };
