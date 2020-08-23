@@ -2,13 +2,17 @@
 // https://docs.microsoft.com/en-us/bingmaps/v8-web-control/creating-and-hosting-map-controls/creating-a-basic-map-control
 
 const CALLBACK_NAME: string = "GetMapCallback";
+const LOADED_CHECK: string = "MicrosoftMapsLoaded";
 
 const inBrowser = () => {
   return typeof window !== "undefined";
 };
 
-let mapsLoaded = () => inBrowser() && !!window.Microsoft?.Maps;
-let initialized = mapsLoaded();
+const mapsLoaded = (): boolean => {
+  return inBrowser() && (window as any)[LOADED_CHECK];
+};
+
+let initialized = false;
 let resolver: any;
 let rejecter: OnErrorEventHandler;
 
@@ -53,11 +57,17 @@ const initializeSSR = (...modulesToLoad: string[]) => {
 };
 
 const setCallback = (modulesToLoad: string[]) => {
+  const win =  window as any;
   //@ts-ignore
-  window[CALLBACK_NAME] = async () => {
+  win[CALLBACK_NAME] = async () => {
     await loadModules(modulesToLoad);
     resolver();
   };
+
+  if (mapsLoaded()){
+    win[CALLBACK_NAME]();
+    win[CALLBACK_NAME] = null;
+  }
 };
 
 function loadModules(modulesToLoad: string[]) {
