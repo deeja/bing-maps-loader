@@ -49,31 +49,17 @@ initialize(API_KEY);
 function addPinToNewMap() {
   // whenLoaded will resolve when the Map library is loaded
   whenLoaded().then(() => {
-    const map = createMap("#map", { zoom: 6 }); // <-- can also use element references
-    const volcanoLocation = createLocation(-39.2817, 175.5685);
-    const volcanoPin = createPin(volcanoLocation, {
+    const map =  new Microsoft.Maps.Map("#map", { zoom: 6 }); // <-- can also use references e.g. Vue $refs, React.createRef()
+    const location = new Microsoft.Maps.Location(-39.2817, 175.5685);
+    const pin = new Microsoft.Maps.Pushpin((location, {
       title: "Ruapehu",
       subTitle: "Volcano",
       text: "5",
     });
     //Add the pushpin to the map
-    map.entities.push(volcanoPin);
+    map.entities.push(pin);
   });
 }
-
-// Use the window.Microsoft.Maps.Map object to create assets
-
-const createMap = (element, options = null) => {
-  return new Microsoft.Maps.Map(element, options);
-};
-
-const createLocation = (lat, lon) => {
-  return new Microsoft.Maps.Location(lat, lon); // east london
-};
-
-const createPin = (location, properties = null) => {
-  return new Microsoft.Maps.Pushpin(location, properties);
-};
 ```
 
 ### SSR example - Also works client side
@@ -85,7 +71,6 @@ Either in the HTML itself
 ```html
 <!-- callback must stay as GetMapCallback -->
 <script
-  data-n-head="ssr"
   src="https://www.bing.com/api/maps/mapcontrol?callback=GetMapCallback&amp;key=[MY API KEY]"
   defer
   async
@@ -112,7 +97,19 @@ const htmlConfig = {
 };
 ```
 
-#### 2. Call `initializeSSR()` on both the server and the client
+#### 2. OPTIONAL - Add this JS script in the head (or in a early loaded js)
+
+If your JS code is late loading, then Microsoft Maps JS may have loaded before your code.
+Microsoft Maps object exists before it is ready to be called so this is not a good check.
+The `bing-maps-loader` checks the `MicrosoftMapsLoaded` entry on the windows object, so this can be set.
+
+```html
+<script>
+  window["GetMapCallback"] = () => (window["MicrosoftMapsLoaded"] = true);
+</script>
+```
+
+#### 3. Call `initializeSSR()` on both the server and the client
 
 ```js
 import "bingmaps"; // <--  Microsoft supported types library for Microsoft.Maps
@@ -145,16 +142,21 @@ const createHeatMapLayer = async function (locations) {
 
 ## Changelog
 
-### 0.6.1 
+### 0.6.2
+
+- SSR Race condition modification `MicrosoftMapsLoaded`
+
+### 0.6.1
+
 - SSR Capability
 - `initialize` method now returns `void` instead of a promise.
-- Added `whenLoaded()` 
+- Added `whenLoaded()`
 
 ### 5.1 and below
+
 - Sweeping changes. No code stability.
 
-
 ## Credits
+
 Loosely copied off a promise based solution for loading JS, but I can't find the original source again!
 If anyone knows, let me know.
-
