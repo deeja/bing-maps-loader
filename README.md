@@ -21,8 +21,6 @@ $ npm install bing-maps-loader --save
 $ npm install bingmaps --save # A Bing maps type library from Microsoft
 ```
 
-Written in ES6. Can be used on any website project or Framework.
-
 This project DOES NOT wrap the `Microsoft.Map` object, so use this directly after loading.
 
 - `BingMapsLoader` - Loads the [JS API from Bing](https://docs.microsoft.com/en-us/bingmaps/v8-web-control/creating-and-hosting-map-controls/creating-a-basic-map-control) directly. The `Promise` is resolved when loaded, or in the case it has already loaded, the `Promise` will resolve immediately. - Can be called multiple times. Will only initialize once. - Used to Hot load [Bing Map modules](https://docs.microsoft.com/en-us/bingmaps/v8-web-control/modules/?toc=https://docs.microsoft.com/en-us/bingmaps/v8-web-control/toc.json&bc=https://docs.microsoft.com/en-us/BingMaps/breadcrumb/toc.json) - `Promise` based
@@ -48,7 +46,7 @@ initialize(API_KEY);
 // Creating a map and adding a pin after API has been loaded
 function addPinToNewMap() {
   // whenLoaded will resolve when the Map library is loaded
-  whenLoaded().then(() => {
+  whenLoaded.then(() => {
     const map =  new Microsoft.Maps.Map("#map", { zoom: 6 }); // <-- can also use references e.g. Vue $refs, React.createRef()
     const location = new Microsoft.Maps.Location(-39.2817, 175.5685);
     const pin = new Microsoft.Maps.Pushpin((location, {
@@ -100,14 +98,17 @@ const htmlConfig = {
 #### 2. OPTIONAL - Add this JS script in the head (or in a early loaded js)
 
 If your JS code is late loading, then Microsoft Maps JS may have loaded before your code.
-Microsoft Maps object exists before it is ready to be called so this is not a good check.
-The `bing-maps-loader` checks the `MicrosoftMapsLoaded` entry on the windows object, so this can be set.
+The `Microsoft.Maps` object can exist before the library is ready to be used. 
+Internally, the `bing-maps-loader` looks on the window object for a property of `MicrosoftMapsLoaded`, which is assigned by the following code:
 
 ```html
 <script>
   window["GetMapCallback"] = () => (window["MicrosoftMapsLoaded"] = true);
 </script>
 ```
+
+The above could also be called via a non-async, non-deferred JS script. 
+
 
 #### 3. Call `initializeSSR()` on both the server and the client
 
@@ -120,7 +121,7 @@ initializeSSR(); // should be called both on SSR AND in the client code
 // Creating a map and adding a pin after API has been loaded
 function addPinToNewMap() {
   // whenLoaded will resolve when the Map library is loaded
-  whenLoaded().then(() => {
+  whenLoaded.then(() => {
     /* map code as per the non SSR example */
   });
 }
@@ -142,6 +143,10 @@ const createHeatMapLayer = async function (locations) {
 
 ## Changelog
 
+### 0.6.3 
+
+- Documentation only. Typo: `whenLoaded()`, should be `whenLoaded`
+
 ### 0.6.2
 
 - SSR Race condition modification `MicrosoftMapsLoaded`
@@ -150,7 +155,7 @@ const createHeatMapLayer = async function (locations) {
 
 - SSR Capability
 - `initialize` method now returns `void` instead of a promise.
-- Added `whenLoaded()`
+- Added `whenLoaded`
 
 ### 5.1 and below
 
