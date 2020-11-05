@@ -21,7 +21,7 @@ const getApiUrl = function (apiKey: string) {
 };
 
 /**
- * Fire off the request to load the API 
+ * Fire off the request to load the API
  * @param apiKey
  * @param modulesToLoad Use the Module names list to populate
  */
@@ -42,11 +42,11 @@ const initialize = (apiKey: string, ...modulesToLoad: string[]) => {
 };
 
 /**
- * For SSR implementations, the script url + api key will already be in the HTML head. 
+ * For SSR implementations, the script url + api key will already be in the HTML head.
  * @param modulesToLoad Use the Module names list to populate
  */
 const initializeSSR = (...modulesToLoad: string[]) => {
-  if (initialized){
+  if (initialized) {
     return;
   }
   if (inBrowser()) {
@@ -57,14 +57,14 @@ const initializeSSR = (...modulesToLoad: string[]) => {
 };
 
 const setCallback = (modulesToLoad: string[]) => {
-  const win =  window as any;
+  const win = window as any;
   //@ts-ignore
   win[CALLBACK_NAME] = async () => {
     await loadModules(modulesToLoad);
     resolver();
   };
 
-  if (mapsLoaded()){
+  if (mapsLoaded()) {
     win[CALLBACK_NAME]();
     win[CALLBACK_NAME] = null;
   }
@@ -111,7 +111,7 @@ const loadModule = (moduleName: string) => {
   });
 };
 
-export const ModuleNames = {
+const moduleNames = {
   AutoSuggest: "Microsoft.Maps.Autosuggest",
   Clustering: "Microsoft.Maps.Clustering",
   Contour: "Microsoft.Maps.Contour",
@@ -129,4 +129,11 @@ export const ModuleNames = {
   VenueMaps: "Microsoft.Maps.VenueMaps",
 };
 
-export { initialize, whenLoaded, initializeSSR, getApiUrl, loadModule };
+export {
+  initialize,
+  whenLoaded,
+  initializeSSR,
+  getApiUrl,
+  loadModule,
+  moduleNames,
+};

@@ -133,15 +133,66 @@ Refer to [Bing Maps Modules](https://docs.microsoft.com/en-us/bingmaps/v8-web-co
 
 ```js
 import "bingmaps";
-import BingMapsLoader, { ModuleNames } from "bing-maps-loader";
+import { initialize, whenLoaded, moduleNames } from "bing-maps-loader";
 
 const createHeatMapLayer = async function (locations) {
-  await BingMapModuleLoader.loadModule(ModuleNames.HeatMap);
+  await BingMapModuleLoader.loadModule(moduleNames.HeatMap);
   return new Microsoft.Maps.HeatMapLayer(locations);
 };
 ```
 
+### Vue.js Example : Auto suggest without maps
+Initialize the library on start up
+```js
+import { initialize } from "bing-maps-loader";
+initialize("[ My API Key ]");  // if using SSR, read the instructions above.
+```
+
+Use the promises to handle the loading of the modules
+```vue
+<template>
+  <div>
+    <div ref="searchBoxContainer">
+      <input
+        class="bg-blue"
+        placeholder="hey there"
+        type="text"
+        ref="searchBox"
+      />
+    </div>
+  </div>
+</template>
+<script lang="ts">
+import Vue from "vue";
+import { whenLoaded, loadModule, moduleNames } from "bing-maps-loader";
+export default Vue.extend({
+  data(): { data: any } {
+    return { data: null };
+  },
+  mounted() {
+    whenLoaded    
+      .then(() => loadModule(moduleNames.AutoSuggest))
+      .then(() => {    
+        var manager = new Microsoft.Maps.AutosuggestManager(options);
+        manager.attachAutosuggest(
+          (this.$refs as any).searchBox,
+          (this.$refs as any).searchBoxContainer,
+          (result) => {
+            alert(JSON.stringify(result, null, 2))
+          }
+        );
+      });
+  },
+});
+</script>
+```
+
+
 ## Changelog
+
+### 1.0.1
+ - Change ModuleNames to moduleNames
+ - General clean 
 
 ### 0.6.3 
 
