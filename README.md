@@ -190,6 +190,9 @@ export default Vue.extend({
 
 ## Changelog
 
+### 1.0.7
+ - Testing a publish command a few too many times
+
 ### 1.0.3
  - Casing on module name was incorrect `Microsoft.Maps.Autosuggest` -> `Microsoft.Maps.AutoSuggest`
  
