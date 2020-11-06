@@ -1,6 +1,6 @@
 {
   "name": "bing-maps-loader",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "description": "Promise based Bing Maps JS Loader for websites ",
   "main": "dist/index.js",
   "files": [
@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "start": "tsc",
-    "publish": "version patch && tsc && publish"
+    "prepublish": "tsc"
   },
   "repository": {
     "type": "git",
