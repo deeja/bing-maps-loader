@@ -112,7 +112,7 @@ const loadModule = (moduleName: string) => {
 };
 
 const moduleNames = {
-  AutoSuggest: "Microsoft.Maps.Autosuggest",
+  AutoSuggest: "Microsoft.Maps.AutoSuggest",
   Clustering: "Microsoft.Maps.Clustering",
   Contour: "Microsoft.Maps.Contour",
   DataBinning: "Microsoft.Maps.DataBinning",
