@@ -7,7 +7,8 @@
     "dist"
   ],
   "scripts": {
-    "start": "tsc"
+    "start": "tsc",
+    "publish": "version patch && tsc && publish"
   },
   "repository": {
     "type": "git",
